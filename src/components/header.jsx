@@ -1,95 +1,100 @@
 import { useState } from "react";
-import{ Sun, Moon, User, Menu, X } from "lucide-react"
-function Header({ darkMode, setDarkMode }) {
+import { Sun, Moon, User, Menu, X } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+
+function Header({ darkMode, setDarkMode, transparent = false }) {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { pathname } = useLocation();
+    const foregroundColor = transparent
+        ? "text-white"
+        : "text-[#252522] dark:text-[#F4F0E8]";
+    const buttonHover = transparent
+        ? "hover:bg-white hover:text-[#252522]"
+        : "hover:bg-[#252522] hover:text-white dark:hover:bg-[#F4F0E8] dark:hover:text-[#20231F]";
+    const navClass = (path) =>
+        `text-sm font-medium transition-opacity hover:opacity-70 ${foregroundColor} ${
+            pathname === path ? "underline underline-offset-8" : ""
+        }`;
+
     return (
-        <header className="absolute top-0 z-50 w-full">
+        <header
+            className={`top-0 z-50 w-full ${
+                transparent
+                    ? "absolute"
+                    : "sticky border-b border-black/10 bg-[#F4F0E8] dark:border-white/10 dark:bg-[#20231F]"
+            }`}
+        >
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
-                <a
-                    href="/"
-                    className="text-2xl font-semibold tracking-tight text-white sm:text-3xl"
+                <Link
+                    to="/"
+                    className={`text-2xl font-semibold tracking-tight sm:text-3xl ${foregroundColor}`}
                 >
                     Jirani <span className="font-light">Trails</span>
-                </a>
+                </Link>
+
                 <nav className="hidden items-center gap-8 md:flex">
-                    <a
-                        href="/"
-                        className="text-sm font-medium text-white transition-opacity hover:opacity-70"
-                    >
+                    <Link to="/" className={navClass("/")}>
                         Explore
-                    </a>
-                    <a
-                        href="#destinations"
-                        className="text-sm font-medium text-white transition-opacity hover:opacity-70"
+                    </Link>
+                    <Link to="/trails" className={navClass("/trails")}>
+                        Find Trails
+                    </Link>
+                    <Link
+                        to="/#destinations"
+                        className={`text-sm font-medium transition-opacity hover:opacity-70 ${foregroundColor}`}
                     >
                         Destinations
-                    </a>
-                    <a
-                        href="#about"
-                        className="text-sm font-medium text-white transition-opacity hover:opacity-70"
-                    >
-                        About
-                    </a>
+                    </Link>
                 </nav>
+
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => setDarkMode(!darkMode)}
                         aria-label="Toggle dark mode"
-                        className="flex h-10 w-10 items-center justify-center   text-white "
+                        className={`flex h-10 w-10 items-center justify-center ${foregroundColor}`}
                     >
                         {darkMode ? <Sun size={18} /> : <Moon size={18} />}
                     </button>
-
                     <button
                         aria-label="Profile"
-                        className="flex h-10 w-10 rounded-full  items-center justify-center  border-white/50 text-white transition hover:bg-white hover:text-black" title="Profile"
+                        title="Profile"
+                        className={`flex h-10 w-10 items-center justify-center rounded-full transition ${foregroundColor} ${buttonHover}`}
                     >
                         <User size={18} />
-                        
                     </button>
                     <button
                         onClick={() => setMenuOpen(!menuOpen)}
                         aria-label="Toggle navigation menu"
-                        className="flex h-10 w-10 rounded-full items-center justify-center  text-white transition hover:bg-white hover:text-black md:hidden" title="menu"
+                        title="Menu"
+                        className={`flex h-10 w-10 items-center justify-center rounded-full transition md:hidden ${foregroundColor} ${buttonHover}`}
                     >
                         {menuOpen ? <X size={20} /> : <Menu size={20} />}
                     </button>
                 </div>
             </div>
-            {/* mobile navigation */}
-            {menuOpen && (
-                <nav className="mx-4 rounded-2xl bg-black/30 p-6 backdrop-blur-md md:hidden shadow-lg">
-                    <div className="flex flex-col gap-5">
-                        <a
-                            href="/"
-                            onClick={() => setMenuOpen(false)}
-                            className="text-sm font-medium text-white hover:opacity-70"
-                        >
-                            Explore
-                        </a>
 
-                        <a
-                            href="#destinations"
+            {menuOpen && (
+                <nav
+                    className={`mx-4 rounded-2xl p-6 shadow-lg backdrop-blur-md md:hidden ${
+                        transparent
+                            ? "bg-black/50 text-white"
+                            : "bg-[#EAE4D8] text-[#252522] dark:bg-[#2B2E29] dark:text-[#F4F0E8]"
+                    }`}
+                >
+                    <div className="flex flex-col gap-5">
+                        <Link to="/" onClick={() => setMenuOpen(false)} className={navClass("/")}>
+                            Explore
+                        </Link>
+                        <Link to="/trails" onClick={() => setMenuOpen(false)} className={navClass("/trails")}>
+                            Find Trails
+                        </Link>
+                        <Link
+                            to="/#destinations"
                             onClick={() => setMenuOpen(false)}
-                            className="text-sm font-medium text-white hover:opacity-70"
+                            className={`text-sm font-medium hover:opacity-70 ${foregroundColor}`}
                         >
                             Destinations
-                        </a>
-
-                        <a
-                            href="#about"
-                            onClick={() => setMenuOpen(false)}
-                            className="text-sm font-medium text-white hover:opacity-70"
-                        >
-                            About
-                        </a>
-
-                        <button
-                            className="flex items-center gap-2 border-t border-white/20 pt-5 text-left text-sm font-medium text-white"
-                            aria-label="Profile"
-                        >
-                            👤 Profile
-                        </button>
+                        </Link>
                     </div>
                 </nav>
             )}

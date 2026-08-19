@@ -1,4 +1,6 @@
-const Hero = () => {
+import { useState } from "react";
+const Hero = ({ darkMode, onSearch }) => {
+    const [searchTerm, setSearchTerm] = useState("");
     return (
         <section className="relative flex min-h-screen items-center overflow-hidden ">
             <img
@@ -8,12 +10,14 @@ const Hero = () => {
             />
 
             {/* Overlay */}
-            <div className="absolute inset-0 bg-black/65" />
+            <div
+                className={`absolute inset-0 transition-colors ${
+                    darkMode ? "bg-black/80" : "bg-black/65"
+                }`}
+            />
 
             <div className="relative z-10 mx-auto flex justify-center  text-center w-full max-w-7xl px-6 pt-24 lg:px-8">
                 <div className="max-w-3xl text-white">
-                    
-
                     <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-8xl">
                         Find your next
                         <span className="block font-light italic">
@@ -27,10 +31,10 @@ const Hero = () => {
                         weather, and start exploring.
                     </p>
 
-                    <div className="mx-auto mt-10 flex max-w-2xl flex-col gap-3 rounded-2xl bg-white p-3 text-left shadow-2xl sm:flex-row">
+                    <div className="mx-auto mt-10 flex max-w-2xl flex-col gap-3 rounded-2xl bg-white p-3 text-left shadow-2xl transition-colors dark:bg-[#2B2E29] sm:flex-row">
                         <div className="flex flex-1 items-center gap-3 px-4">
                             <svg
-                                className="h-5 w-5 text-gray-500"
+                                className="h-5 w-5 text-gray-500 dark:text-[#B7B4AA]"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -45,12 +49,24 @@ const Hero = () => {
 
                             <input
                                 type="text"
+                                value={searchTerm}
+                                onChange={(event) =>
+                                    setSearchTerm(event.target.value)
+                                }
                                 placeholder="Where do you want to explore?"
-                                className="w-full bg-transparent py-3 text-sm text-gray-900 outline-none placeholder:text-gray-400"
+                                className="w-full bg-transparent py-3 text-sm text-gray-900 outline-none placeholder:text-gray-400 dark:text-[#F4F0E8] dark:placeholder:text-[#B7B4AA]"
                             />
                         </div>
 
-                        <button className="rounded-xl cursor-pointer bg-black px-7 py-3 text-sm font-medium text-white transition hover:bg-gray-800">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (searchTerm.trim()) {
+                                    onSearch(searchTerm.trim());
+                                }
+                            }}
+                            className="cursor-pointer rounded-xl bg-black px-7 py-3 text-sm font-medium text-white transition hover:bg-gray-800 dark:bg-[#F4F0E8] dark:text-[#20231F] dark:hover:bg-white"
+                        >
                             Explore
                         </button>
                     </div>
