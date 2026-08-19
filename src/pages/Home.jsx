@@ -4,8 +4,8 @@ import DestinationsSection from "../components/DestinationsSection";
 
 const Home = ({ darkMode, setDarkMode }) => (
     <>
-        <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <Hero />
+        <Header darkMode={darkMode} setDarkMode={setDarkMode} transparent />
+        <Hero darkMode={darkMode} />
         <DestinationsSection />
     </>
 );

@@ -1,38 +1,51 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-const destinations = [
-    {
-        id: 1,
-        name: "Mount Kenya",
-        location: "Nanyuki, Kenya",
-        category: "Mountain",
-        image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=1600&q=85",
-    },
-    {
-        id: 2,
-        name: "Ngong Hills",
-        location: "Nairobi, Kenya",
-        category: "Hiking",
-        image: "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1600&q=85",
-    },
-    {
-        id: 3,
-        name: "Karura Forest",
-        location: "Nairobi, Kenya",
-        category: "Forest",
-        image: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=85",
-    },
-];
+import { getNearbyDestinations } from "../services/destinations";
 
 const DestinationSection = () => {
+    const [destinations, setDestinations] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                try {
+                    const { latitude, longitude } = position.coords;
+
+                    const data = await getNearbyDestinations(
+                        latitude,
+                        longitude,
+                    );
+
+                    setDestinations(data);
+                } catch (err) {
+                    console.error(err);
+                    setError("We couldn't find destinations near you.");
+                } finally {
+                    setLoading(false);
+                }
+            },
+            (error) => {
+                console.error(error);
+                setError(
+                    "Please allow location access to discover nearby destinations.",
+                );
+                setLoading(false);
+            },
+        );
+    }, []);
+
     return (
         <section
             id="destinations"
-            className="bg-[#F4F0E8] px-6 py-24 text-[#171717] dark:bg-[#20231F] dark:text-white lg:px-10"
+            className="bg-[#F4F0E8] px-6 py-24 text-[#252522] dark:bg-[#20231F] dark:text-[#F4F0E8] lg:px-10"
         >
             <div className="mx-auto max-w-7xl">
+                {/* Section heading */}
                 <div className="mb-14 flex items-end justify-between">
                     <div>
-                        <p className="mb-4 text-xs uppercase tracking-[0.25em] text-neutral-500 dark:text-neutral-400">
+                        <p className="mb-4 text-xs uppercase tracking-[0.25em] text-[#78756D] dark:text-[#B7B4AA]">
                             Discover
                         </p>
 
@@ -47,37 +60,77 @@ const DestinationSection = () => {
                     </button>
                 </div>
 
-                <div className="grid gap-8 md:grid-cols-3">
-                    {destinations.map((destination) => (
-                        <Link
-                            key={destination.id}
-                            to={`/destination/${destination.id}`}
-                            className="group block"
-                        >
-                            <div className="relative aspect-4/5 overflow-hidden">
-                                <img
-                                    src={destination.image}
-                                    alt={destination.name}
-                                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                                />
+                {/* Loading */}
+                {loading && (
+                    <div className="py-20 text-center text-[#78756D] dark:text-[#B7B4AA]">
+                        Discovering destinations near you...
+                    </div>
+                )}
 
-                                <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent p-6 pt-24 text-white">
-                                    <p className="mb-2 text-xs uppercase tracking-[0.2em] text-white/70">
-                                        {destination.category}
-                                    </p>
+                {/* Error */}
+                {!loading && error && (
+                    <div className="py-20 text-center text-[#78756D] dark:text-[#B7B4AA]">
+                        {error}
+                    </div>
+                )}
 
-                                    <h3 className="text-2xl font-light">
-                                        {destination.name}
-                                    </h3>
+                {/* Empty */}
+                {!loading && !error && destinations.length === 0 && (
+                    <div className="py-20 text-center text-[#78756D] dark:text-[#B7B4AA]">
+                        No destinations found nearby.
+                    </div>
+                )}
 
-                                    <p className="mt-1 text-sm text-white/75">
-                                        {destination.location}
-                                    </p>
+                {/* Destinations */}
+                {!loading && !error && destinations.length > 0 && (
+                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                        {destinations.map((destination, index) => (
+                            <Link
+                                key={destination.id}
+                                to={`/destination/${destination.id}`}
+                                className="group block"
+                            >
+                                <div className="relative aspect-4/5 overflow-hidden">
+                                    <img
+                                        src={
+                                            [
+                                                "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85",
+                                                "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1600&q=85",
+                                                "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=85",
+                                            ][index % 3]
+                                        }
+                                        alt={destination.name}
+                                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                                    />
+
+                                    <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent p-6 pt-24 text-white">
+                                        <p className="mb-2 text-xs uppercase tracking-[0.2em] text-white/70">
+                                            {destination.categories?.[0] ||
+                                                "Destination"}
+                                        </p>
+
+                                        <h3 className="text-2xl font-light">
+                                            {destination.name}
+                                        </h3>
+
+                                        <p className="mt-1 text-sm text-white/75">
+                                            {destination.location}
+                                        </p>
+
+                                        {destination.distance && (
+                                            <p className="mt-2 text-xs text-white/60">
+                                                {Math.round(
+                                                    destination.distance / 1000,
+                                                )}{" "}
+                                                km away
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     );
