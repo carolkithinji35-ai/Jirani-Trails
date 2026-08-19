@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+    font-family: Inter, system-ui, sans-serif;
+
+    --color-bg: #f4f0e8;
+    --color-surface: #eae4d8;
+    --color-card: #ffffff;
+    --color-text: #252522;
+    --color-muted: #78756d;
+    --color-accent: #a65f43;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background: var(--color-bg);
+    color: var(--color-text);
+}

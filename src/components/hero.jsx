@@ -12,9 +12,7 @@ const Hero = () => {
 
             <div className="relative z-10 mx-auto flex justify-center  text-center w-full max-w-7xl px-6 pt-24 lg:px-8">
                 <div className="max-w-3xl text-white">
-                    <p className="mb-5 text-sm font-medium uppercase tracking-[0.3em]">
-                        Discover • Explore • Wander
-                    </p>
+                    
 
                     <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-8xl">
                         Find your next
